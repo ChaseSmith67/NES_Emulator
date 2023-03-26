@@ -3,6 +3,11 @@
 
 import numpy as np
 
+# ## Considering several ways of optimizing the way registers are set and
+# ## their values retrieved, the abundance of getter/setter methods certainly
+# ## clutters things a bit. However, this early in the process, I want them
+# ## all separate and easily modified.
+
 
 class CPU(object):
     """
@@ -71,3 +76,26 @@ class CPU(object):
     def set_counter(self, val: np.uint16) -> None:
         """Sets the Program Counter to the specified value"""
         self.counter = val
+
+    def get_flag_N(self) -> np.bool:
+        return self.flag_N
+
+    def get_flag_V(self) -> np.bool:
+        return self.flag_V
+
+    def get_flag_B(self) -> np.bool:
+        return self.flag_B
+
+    def get_flag_D(self) -> np.bool:
+        return self.flag_D
+
+    def get_flag_I(self) -> np.bool:
+        return self.flag_I
+
+    def get_flag_Z(self) -> np.bool:
+        return self.flag_Z
+
+    def get_flag_C(self) -> np.bool:
+        return self.flag_C
+
+
