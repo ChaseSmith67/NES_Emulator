@@ -11,7 +11,7 @@ import numpy as np
 
 class CPU(object):
     """
-    Represents the Central Processing Unit, designed to emulate the 6052
+    Represents the Central Processing Unit, designed to emulate the 6502
     Microprocessor.
     """
 
