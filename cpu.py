@@ -3,6 +3,8 @@
 
 import numpy as np
 
+from ram import RAM
+
 # ## Considering several ways of optimizing the way registers are set and
 # ## their values retrieved, the abundance of getter/setter methods certainly
 # ## clutters things a bit. However, this early in the process, I want them
@@ -15,8 +17,15 @@ class CPU(object):
     Microprocessor.
     """
 
-    def __init__(self):
-        """Initializes the CPU object and sets all registers and flags to 0."""
+    def __init__(self, ram: RAM):
+        """
+        Initializes the CPU object and sets all registers and flags to 0.
+        Creates RAM necessary for operation.
+        """
+
+        # Create RAM
+        self.ram = ram
+
         # 8-Bit Registers: A, X & Y
         self.reg_A = np.uint8(0)    # Accumulator Register
         self.reg_X = np.uint8(0)    # Index Register X

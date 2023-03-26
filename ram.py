@@ -10,5 +10,11 @@ import numpy as np
 # Number of Kilobytes of RAM, change this variable to adjust
 KB = 2
 
-ram = np.array([0] * (KB * 1024), dtype=np.uint8)
+class RAM(object):
+
+    def __init__(self):
+        self.memory = np.array([0] * (KB * 1024), dtype=np.uint8)
+
+    def get_memory(self) -> np.array(np.uint8):
+        return self.memory
 

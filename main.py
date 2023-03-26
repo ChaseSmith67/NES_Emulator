@@ -4,6 +4,18 @@
 
 import argparse
 
+from cpu import CPU
+from ram import RAM
+
+
+class System(object):
+    """
+    Represents the complete computing system, with all necessary components.
+    """
+    def __init__(self):
+        self.ram = RAM()
+        self.cpu = CPU(self.ram)
+
 
 def parse_args() -> object:
     parser = argparse.ArgumentParser()
