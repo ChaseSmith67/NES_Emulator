@@ -17,6 +17,12 @@ class System(object):
         self.cpu = CPU(self.ram)
 
 
+def system_setup() -> System:
+    NES = System()
+
+    return NES
+
+
 def parse_args() -> object:
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", "-p", type=str, help="Path to ROM file")
@@ -28,17 +34,31 @@ def parse_args() -> object:
 
 
 def main():
-    args = parse_args()
 
-    # TODO: validate ROM path
-    rom_path = args.path
+    # === SETUP TO READ ROM
+    # args = parse_args()
+    #
+    # # TODO: validate ROM path
+    # rom_path = args.path
+    #
+    # print(rom_path)
+    #
+    # with open(rom_path, "rb") as file:
+    #     for line in file.readlines():
+    #         print(line)
 
-    print(rom_path)
+    system = system_setup()
 
-    with open(rom_path, "rb") as file:
-        for line in file.readlines():
-            print(line)
+    print(system.cpu)
+    print(system.ram)
+    memory = system.ram.get_memory()
+    for i in range(len(memory)):
+        address = i
+        print(hex(address))
 
 
 if __name__ == "__main__":
     main()
+
+
+
