@@ -12,7 +12,7 @@ up with a somewhat usable finished product.
 
 While I do welcome collaboration from anyone interested, this project is meant to be educational.
 If you see anything that's terribly wrong with the design or implementation, feel free to submit
-a pull request, preferrably with a detailed explanation of why it should be done differently.
+a pull request, preferably with a detailed explanation of why it should be done differently.
 
 I've done a few (very simple) projects with IA-32 assembly and have studied x86 architecture at a
 high level, so the basic concepts are not completely foreign to me. However, this is definitely
