@@ -30,3 +30,13 @@ it isn't that simple. In order to test and ensure that everything works as inten
 able to run much smaller pieces of software designed to test the emulated hardware for bugs. I think
 I should be able to start pretty simply and only implement a handful of instructions to test the
 basic design of the emulated machine. Hopefully, any major flaws will become evident quickly...
+
+## Update #2
+
+I've decided to make a design change for the time being. To keep from having to refactor and redesign
+as many components of the NES as I get the CPU and instruction set working, I'm going to make a single
+file that contains the emulated CPU and the necessary functions to carry out all the instructions. The
+end result of this step should **hopefully** be what is essentially a 6502 emulator/assembler. Once 
+that is working as intended, I may break that file into sensible components to use where necessary in
+the larger program. Still learning a lot about this neat microprocessor, and now I'm learning some more
+about the software development process as well.
