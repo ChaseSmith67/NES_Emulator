@@ -21,11 +21,12 @@ new skills and learn a few things.
 
 ## Update #1
 
-After a bit of experimenting with potential designs and a bit more research, it had become clear
+After a bit of experimenting with potential designs and a bit more research, it has become clear
 that the short-term scope of the project must change a bit. Before being able to dive head-first 
-into building a NES Emulator, I'll need to make a fully-functional 6502 assembler. This may have
+into building a NES Emulator, I'll need to make a somewhat-functional 6502 assembler. This may have
 been obvious to some, but I guess I assumed that, since any ROMs are going to be already-written
 and fully-tested pieces of software, I would only need to be able to run nice, neat code. Of course,
 it isn't that simple. In order to test and ensure that everything works as intended, I'll have to be
-able to run much smaller pieces of software designed to test the emulated hardware for bugs. This
-could get interesting...
+able to run much smaller pieces of software designed to test the emulated hardware for bugs. I think
+I should be able to start pretty simply and only implement a handful of instructions to test the
+basic design of the emulated machine. Hopefully, any major flaws will become evident quickly...
