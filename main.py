@@ -3,9 +3,11 @@
 
 
 import argparse
+import numpy as np
 
-from cpu import CPU
+# from cpu import CPU
 from ram import RAM
+from instructions import instructions
 
 
 class System(object):
@@ -49,12 +51,15 @@ def main():
 
     system = system_setup()
 
-    print(system.cpu)
-    print(system.ram)
-    memory = system.ram.get_memory()
-    for i in range(len(memory)):
-        address = i
-        print(hex(address))
+    reg_x = system.cpu.reg_X
+
+    print(reg_x)
+
+    system.cpu.set_reg_X(system.cpu.get_reg_X()+np.uint8(1))
+
+    print(system.cpu.get_reg_X())
+
+
 
 
 if __name__ == "__main__":
