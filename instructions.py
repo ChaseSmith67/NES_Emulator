@@ -4,6 +4,14 @@
 # This dictionary will store the functions responsible for carrying out the
 # specified actions. "None" placeholders will remain until they're written
 
+import numpy as np
+
+
+def increment(register: np.uint8) -> None:
+    """Increments the specified register by 1 bit"""
+    register += 1
+
+
 instructions = {
     "ADC": None, "AND": None, "ASL": None, "BCC": None,
     "BCS": None, "BEQ": None, "BIT": None, "BMI": None,
@@ -11,7 +19,7 @@ instructions = {
     "BVS": None, "CLC": None, "CLD": None, "CLI": None,
     "CLV": None, "CMP": None, "CPX": None, "CPY": None,
     "DEC": None, "DEX": None, "DEY": None, "EOR": None,
-    "INC": None, "INX": None, "INY": None, "JMP": None,
+    "INC": increment, "INX": increment, "INY": increment, "JMP": None,
     "JSR": None, "LDA": None, "LDX": None, "LDY": None,
     "LSR": None, "NOP": None, "ORA": None, "PHA": None,
     "PHP": None, "PLA": None, "PLP": None, "ROL": None,
@@ -20,4 +28,3 @@ instructions = {
     "STX": None, "STY": None, "TAX": None, "TAY": None,
     "TSX": None, "TXA": None, "TXS": None, "TYA": None
 }
-
