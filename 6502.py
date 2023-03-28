@@ -19,9 +19,9 @@ class CPU(object):
         self.ram = ram
 
         # 8-Bit Registers: A, X & Y
-        self.reg_A = np.uint8(0)  # Accumulator Register
-        self.reg_X = np.uint8(0)  # Index Register X
-        self.reg_Y = np.uint8(0)  # Index Register Y
+        self.reg_A = np.array([0], dtype=np.uint8)  # Accumulator Register
+        self.reg_X = np.array([0], dtype=np.uint8)  # Index Register X
+        self.reg_Y = np.array([0], dtype=np.uint8)  # Index Register Y
 
         # Considering implementing these as an array...
         # P-Register - 1-Bit Flags
@@ -38,6 +38,15 @@ class CPU(object):
 
         # 16-Bit Program Counter
         self.counter = np.uint16(0)
+
+    def load_reg_from_mem(self, register: np):
+        pass
+
+    def read_reg(self, register: np.array) -> np.uint8:
+        return register[0]
+
+    def write_reg(self, register: np.array, value: int) -> None:
+        register[0] = np.uint8(value)
 
     def increment(self, register: np.uint8) -> None:
         register += np.uint8(1)
@@ -56,12 +65,14 @@ class RAM(object):
         return self.memory
 
     def read_mem(self, address: int) -> np.uint8:
-        """Returns the data stored at the specified position in the memory array"""
-        return self.memory[address]
+        """Returns the data stored at the specified position in the memory array.
+            *Note: Each element in the array represents a byte, so address is divided by 8."""
+        return self.memory[address // 8]
 
     def write_mem(self, address: int, value: np.uint8) -> None:
-        """Sets the specified position in the memory array equal to the given value"""
-        self.memory[address] = value
+        """Sets the specified position in the memory array equal to the given value
+            *Note: Each element in the array represents a byte, so address is divided by 8."""
+        self.memory[address // 8] = value
 
 
 # ========  Below this line is temporary functionality testing  =========
@@ -69,13 +80,15 @@ class RAM(object):
 ram = RAM(2)
 cpu = CPU(ram)
 
-num1 = np.uint8(1)
-num2 = np.uint8(2)
-num3 = np.uint8(3)
+print(cpu.reg_X)
 
-ram.write_mem(0x00, num1)
+print(cpu.read_reg(cpu.reg_X))
 
-print(ram.read_mem(0x00))
+cpu.write_reg(cpu.reg_X, 0x0A)
+
+print(cpu.reg_X)
+
+print(cpu.read_reg(cpu.reg_X))
 
 
 
