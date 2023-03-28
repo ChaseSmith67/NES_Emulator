@@ -25,13 +25,13 @@ class CPU(object):
 
         # Considering implementing these as an array...
         # P-Register - 1-Bit Flags
-        self.flag_N = np.bool_(0)    # Negative Flag
-        self.flag_V = np.bool_(0)    # Overflow
-        self.flag_B = np.bool_(0)    # Break Command
-        self.flag_D = np.bool_(0)    # Decimal Mode Flag
-        self.flag_I = np.bool_(0)    # Interrupt Disable
-        self.flag_Z = np.bool_(0)    # Zero Flag
-        self.flag_C = np.bool_(0)    # Carry Flag
+        self.flag_N = np.array([0], dtype=np.bool_)    # Negative Flag
+        self.flag_V = np.array([0], dtype=np.bool_)    # Overflow
+        self.flag_B = np.array([0], dtype=np.bool_)    # Break Command
+        self.flag_D = np.array([0], dtype=np.bool_)    # Decimal Mode Flag
+        self.flag_I = np.array([0], dtype=np.bool_)    # Interrupt Disable
+        self.flag_Z = np.array([0], dtype=np.bool_)    # Zero Flag
+        self.flag_C = np.array([0], dtype=np.bool_)    # Carry Flag
 
         # 8-Bit Stack Pointer
         self.pointer = np.array([0], dtype=np.uint8)
@@ -68,14 +68,18 @@ class CPU(object):
             specified, default is 1."""
         register[0] -= amount
 
+    def read_flag(self, flag: np.array):
+        return flag[0]
 
-class RAM(object):
+
+class Memory(object):
     """
-    Represents the Random Access Memory to be utilized by the CPU. Consists of
-    an array of bytes. Takes as a parameter the desired memory size in KB.
+    Represents the memory to be utilized by the CPU. Consists of an array of elements,
+    with each element being one byte (8 bits).
     """
-    def __init__(self, size: int):
-        self.memory = np.array([0] * (size * 1024), dtype=np.uint8)
+    def __init__(self):
+        self.memory = np.array([0] * 2048, dtype=np.uint8)
+        # Considering breaking memory array into separate components: ZP, Stack, Gen Purpose
 
     def get_memory(self) -> np.array:
         """Returns entire memory array"""
@@ -94,7 +98,7 @@ class RAM(object):
 
 # ========  Below this line is temporary functionality testing  =========
 
-ram = RAM(2)
+ram = Memory()
 cpu = CPU(ram)
 
 print(cpu.read_reg(cpu.reg_X))
