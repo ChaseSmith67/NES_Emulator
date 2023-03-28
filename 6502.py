@@ -9,14 +9,14 @@ import numpy as np
 
 class CPU(object):
 
-    def __init__(self, ram):
+    def __init__(self, memory):
         """
         Initializes the CPU object and sets all registers and flags to 0.
-        Creates RAM necessary for operation.
+        Creates Memory necessary for operation.
         """
 
-        # Create RAM
-        self.ram = ram
+        # Create Memory
+        self.memory = memory
 
         # 8-Bit Registers: A, X & Y
         self.reg_A = np.array([0], dtype=np.uint8)  # Accumulator Register
@@ -37,9 +37,7 @@ class CPU(object):
         self.pointer = np.array([0], dtype=np.uint8)
 
         # 16-Bit Program Counter
-        self.counter = np.array([0, 0], dtype=np.uint8)
-
-
+        self.counter = np.array([0, 0], dtype=np.uint8)     # Might change this to single uint16
 
     def read_reg(self, register: np.array) -> np.uint8:
         """Returns the 8-bit value stored in the specified register."""
@@ -52,11 +50,11 @@ class CPU(object):
     def load_reg_from_mem(self, register: np.array, address: int) -> None:
         """Takes the 8-bit value from the specified memory address and stores it
             in the specified register."""
-        register[0] = self.ram.read_mem(address)
+        register[0] = self.memory.read_mem(address)
 
     def store_reg_in_mem(self, register: np.array, address: int) -> None:
         """Loads the value stored in the specified register into the given memory address"""
-        self.ram.write_mem(address, self.read_reg(register))
+        self.memory.write_mem(address, self.read_reg(register))
 
     def increment(self, register: np.array, amount: int | np.uint8 = 1) -> None:
         """Decrement the value stored in the specified register. Optional amount can be
@@ -68,8 +66,13 @@ class CPU(object):
             specified, default is 1."""
         register[0] -= amount
 
-    def read_flag(self, flag: np.array):
+    def read_flag(self, flag: np.array) -> None:
+        """Returns the Boolean value of the specified flag"""
         return flag[0]
+
+    def change_flag(self, flag: np.array) -> None:
+        """Changes the Boolean value of the specified flag"""
+        flag[0] = not flag[0]
 
 
 class Memory(object):
@@ -98,30 +101,27 @@ class Memory(object):
 
 # ========  Below this line is temporary functionality testing  =========
 
-ram = Memory()
-cpu = CPU(ram)
+mem = Memory()
+cpu = CPU(mem)
 
-print(cpu.read_reg(cpu.reg_X))
 
 cpu.write_reg(cpu.reg_X, 0x0A)
 
-print(cpu.read_reg(cpu.reg_X))
-
 for i in range(0, 33, 8):
-    ram.write_mem(i, np.uint8(i*3))
-    print(ram.read_mem(i))
+    mem.write_mem(i, np.uint8(i*3))
 
 cpu.load_reg_from_mem(cpu.reg_X, 0x10)
-print(cpu.read_reg(cpu.reg_X))
 cpu.load_reg_from_mem(cpu.reg_X, 0x18)
-print(cpu.read_reg(cpu.reg_X))
 cpu.increment(cpu.reg_X)
-print(cpu.read_reg(cpu.reg_X))
 cpu.increment(cpu.reg_X)
-print(cpu.read_reg(cpu.reg_X))
-
 cpu.store_reg_in_mem(cpu.reg_X, 0x00)
 
-print(ram.read_mem(0x00))
+print(cpu.read_flag(cpu.flag_B))
+cpu.change_flag(cpu.flag_B)
+print(cpu.read_flag(cpu.flag_B))
+print(cpu.read_flag(cpu.flag_B))
+cpu.change_flag(cpu.flag_B)
+print(cpu.read_flag(cpu.flag_B))
+
 
 
