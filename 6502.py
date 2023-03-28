@@ -34,7 +34,7 @@ class CPU(object):
         self.flag_C = np.array([0], dtype=np.bool_)    # Carry Flag
 
         # 8-Bit Stack Pointer
-        self.pointer = np.array([0], dtype=np.uint8)
+        self.pointer = np.array([0x00FF], dtype=np.uint8)
 
         # 16-Bit Program Counter
         self.counter = np.array([0, 0], dtype=np.uint8)     # Might change this to single uint16
@@ -122,6 +122,7 @@ print(cpu.read_flag(cpu.flag_B))
 print(cpu.read_flag(cpu.flag_B))
 cpu.change_flag(cpu.flag_B)
 print(cpu.read_flag(cpu.flag_B))
+print(cpu.pointer)
 
 
 
