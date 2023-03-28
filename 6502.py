@@ -34,10 +34,10 @@ class CPU(object):
         self.flag_C = np.bool_(0)    # Carry Flag
 
         # 8-Bit Stack Pointer
-        self.pointer = np.uint8(0)
+        self.pointer = np.array([0], dtype=np.uint8)
 
         # 16-Bit Program Counter
-        self.counter = np.uint16(0)
+        self.counter = np.array([0, 0], dtype=np.uint8)
 
 
 
@@ -45,7 +45,7 @@ class CPU(object):
         """Returns the 8-bit value stored in the specified register."""
         return register[0]
 
-    def write_reg(self, register: np.array, value: int) -> None:
+    def write_reg(self, register: np.array, value: int | np.uint8) -> None:
         """Takes an integer value and stores it in the specified register."""
         register[0] = np.uint8(value)
 
@@ -54,11 +54,19 @@ class CPU(object):
             in the specified register."""
         register[0] = self.ram.read_mem(address)
 
-    def increment(self, register: np.array) -> None:
-        register[0] += 1
+    def store_reg_in_mem(self, register: np.array, address: int) -> None:
+        """Loads the value stored in the specified register into the given memory address"""
+        self.ram.write_mem(address, self.read_reg(register))
 
-    def decrement(self, register: np.array) -> None:
-        register[0] -= 1
+    def increment(self, register: np.array, amount: int | np.uint8 = 1) -> None:
+        """Decrement the value stored in the specified register. Optional amount can be
+            specified, default is 1."""
+        register[0] += amount
+
+    def decrement(self, register: np.array, amount: int | np.uint8 = 1) -> None:
+        """Decrement the value stored in the specified register. Optional amount can be
+            specified, default is 1."""
+        register[0] -= amount
 
 
 class RAM(object):
@@ -69,7 +77,7 @@ class RAM(object):
     def __init__(self, size: int):
         self.memory = np.array([0] * (size * 1024), dtype=np.uint8)
 
-    def get_memory(self) -> np.array(np.uint8):
+    def get_memory(self) -> np.array:
         """Returns entire memory array"""
         return self.memory
 
@@ -78,7 +86,7 @@ class RAM(object):
             *Note: Each element in the array represents a byte, so address is divided by 8."""
         return self.memory[address // 8]
 
-    def write_mem(self, address: int, value: np.uint8) -> None:
+    def write_mem(self, address: int, value: int | np.uint8) -> None:
         """Sets the specified position in the memory array equal to the given value
             *Note: Each element in the array represents a byte, so address is divided by 8."""
         self.memory[address // 8] = value
@@ -105,5 +113,11 @@ cpu.load_reg_from_mem(cpu.reg_X, 0x18)
 print(cpu.read_reg(cpu.reg_X))
 cpu.increment(cpu.reg_X)
 print(cpu.read_reg(cpu.reg_X))
-cpu.decrement(cpu.reg_X)
+cpu.increment(cpu.reg_X)
 print(cpu.read_reg(cpu.reg_X))
+
+cpu.store_reg_in_mem(cpu.reg_X, 0x00)
+
+print(ram.read_mem(0x00))
+
+
