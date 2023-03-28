@@ -37,7 +37,7 @@ class CPU(object):
         self.pointer = np.array([0x00FF], dtype=np.uint8)
 
         # 16-Bit Program Counter
-        self.counter = np.array([0, 0], dtype=np.uint8)     # Might change this to single uint16
+        self.counter = np.array([0x0800], dtype=np.uint16)
 
     def read_reg(self, register: np.array) -> np.uint8:
         """Returns the 8-bit value stored in the specified register."""
@@ -77,11 +77,11 @@ class CPU(object):
 
 class Memory(object):
     """
-    Represents the memory to be utilized by the CPU. Consists of an array of elements,
-    with each element being one byte (8 bits).
+    Represents the memory to be utilized by the CPU. Consists of a 2D array of 8 pages
+    of 256 elements each, with each element being 1 byte.
     """
     def __init__(self):
-        self.memory = np.array([0] * 2048, dtype=np.uint8)
+        self.memory = np.zeros(shape=(8, 256), dtype=np.uint8)
         # Considering breaking memory array into separate components: ZP, Stack, Gen Purpose
 
     def get_memory(self) -> np.array:
@@ -89,40 +89,36 @@ class Memory(object):
         return self.memory
 
     def read_mem(self, address: int) -> np.uint8:
-        """Returns the data stored at the specified position in the memory array.
-            *Note: Each element in the array represents a byte, so address is divided by 8."""
-        return self.memory[address // 8]
+        """Returns the data stored at the specified position in the memory array"""
+        return self.memory[address]
 
     def write_mem(self, address: int, value: int | np.uint8) -> None:
-        """Sets the specified position in the memory array equal to the given value
-            *Note: Each element in the array represents a byte, so address is divided by 8."""
-        self.memory[address // 8] = value
+        """Sets the specified position in the memory array equal to the given value"""
+        self.memory[address] = value
 
 
 # ========  Below this line is temporary functionality testing  =========
 
 mem = Memory()
 cpu = CPU(mem)
+a = cpu.reg_A
+x = cpu.reg_X
+y = cpu.reg_Y
 
 
-cpu.write_reg(cpu.reg_X, 0x0A)
+# LDA #$01  - load literal 0x01 into accumulator
+cpu.write_reg(a, 0x01)
+# STA $0200 - store accumulator value in 0x0200
+cpu.store_reg_in_mem(a, 0x0200)
+# LDA #$05  - load literal 0x05 into accumulator
+cpu.write_reg(a, 0x05)
+# STA $0201 - store accumulator value in 0x0201
+cpu.store_reg_in_mem(a, 0x0208)
+# LDA #$08  - load literal 0x08 into accumulator
+cpu.write_reg(a, 0x08)
+# STA $0202 - store accumulator value in 0x0202
+cpu.store_reg_in_mem(a, 0x0210)
 
-for i in range(0, 33, 8):
-    mem.write_mem(i, np.uint8(i*3))
-
-cpu.load_reg_from_mem(cpu.reg_X, 0x10)
-cpu.load_reg_from_mem(cpu.reg_X, 0x18)
-cpu.increment(cpu.reg_X)
-cpu.increment(cpu.reg_X)
-cpu.store_reg_in_mem(cpu.reg_X, 0x00)
-
-print(cpu.read_flag(cpu.flag_B))
-cpu.change_flag(cpu.flag_B)
-print(cpu.read_flag(cpu.flag_B))
-print(cpu.read_flag(cpu.flag_B))
-cpu.change_flag(cpu.flag_B)
-print(cpu.read_flag(cpu.flag_B))
-print(cpu.pointer)
-
-
-
+print(mem.read_mem(0x0200))
+print(mem.read_mem(0x0208))
+print(mem.read_mem(0x0210))
