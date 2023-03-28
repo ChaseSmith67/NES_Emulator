@@ -6,6 +6,7 @@
 import numpy as np
 
 
+
 class CPU(object):
 
     def __init__(self, ram):
@@ -51,7 +52,16 @@ class RAM(object):
         self.memory = np.array([0] * (size * 1024), dtype=np.uint8)
 
     def get_memory(self) -> np.array(np.uint8):
+        """Returns entire memory array"""
         return self.memory
+
+    def read_mem(self, address: int) -> np.uint8:
+        """Returns the data stored at the specified position in the memory array"""
+        return self.memory[address]
+
+    def write_mem(self, address: int, value: np.uint8) -> None:
+        """Sets the specified position in the memory array equal to the given value"""
+        self.memory[address] = value
 
 
 # ========  Below this line is temporary functionality testing  =========
@@ -59,10 +69,13 @@ class RAM(object):
 ram = RAM(2)
 cpu = CPU(ram)
 
-print(cpu.reg_X)
+num1 = np.uint8(1)
+num2 = np.uint8(2)
+num3 = np.uint8(3)
 
-cpu.increment(cpu.reg_X)
+ram.write_mem(0x00, num1)
 
-print(cpu.reg_X)
+print(ram.read_mem(0x00))
+
 
 
