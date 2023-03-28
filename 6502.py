@@ -39,17 +39,26 @@ class CPU(object):
         # 16-Bit Program Counter
         self.counter = np.uint16(0)
 
-    def load_reg_from_mem(self, register: np):
-        pass
+
 
     def read_reg(self, register: np.array) -> np.uint8:
+        """Returns the 8-bit value stored in the specified register."""
         return register[0]
 
     def write_reg(self, register: np.array, value: int) -> None:
+        """Takes an integer value and stores it in the specified register."""
         register[0] = np.uint8(value)
 
-    def increment(self, register: np.uint8) -> None:
-        register += np.uint8(1)
+    def load_reg_from_mem(self, register: np.array, address: int) -> None:
+        """Takes the 8-bit value from the specified memory address and stores it
+            in the specified register."""
+        register[0] = self.ram.read_mem(address)
+
+    def increment(self, register: np.array) -> None:
+        register[0] += 1
+
+    def decrement(self, register: np.array) -> None:
+        register[0] -= 1
 
 
 class RAM(object):
@@ -80,15 +89,21 @@ class RAM(object):
 ram = RAM(2)
 cpu = CPU(ram)
 
-print(cpu.reg_X)
-
 print(cpu.read_reg(cpu.reg_X))
 
 cpu.write_reg(cpu.reg_X, 0x0A)
 
-print(cpu.reg_X)
-
 print(cpu.read_reg(cpu.reg_X))
 
+for i in range(0, 33, 8):
+    ram.write_mem(i, np.uint8(i*3))
+    print(ram.read_mem(i))
 
-
+cpu.load_reg_from_mem(cpu.reg_X, 0x10)
+print(cpu.read_reg(cpu.reg_X))
+cpu.load_reg_from_mem(cpu.reg_X, 0x18)
+print(cpu.read_reg(cpu.reg_X))
+cpu.increment(cpu.reg_X)
+print(cpu.read_reg(cpu.reg_X))
+cpu.decrement(cpu.reg_X)
+print(cpu.read_reg(cpu.reg_X))
