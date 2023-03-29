@@ -91,16 +91,16 @@ class Memory(object):
     def read_mem(self, address: int) -> np.uint8:
         """Returns the data stored at the specified position in the memory array"""
 
-        low_byte = address.to_bytes(2, "little")[1]
-        high_byte = address.to_bytes(2, "little")[0]
+        low_byte = address.to_bytes(2, "little")[0]
+        high_byte = address.to_bytes(2, "little")[1]
 
         return self.memory[high_byte][low_byte]
 
     def write_mem(self, address: int, value: int | np.uint8) -> None:
         """Sets the specified position in the memory array equal to the given value"""
 
-        low_byte = address.to_bytes(2, "little")[1]
-        high_byte = address.to_bytes(2, "little")[0]
+        low_byte = address.to_bytes(2, "little")[0]
+        high_byte = address.to_bytes(2, "little")[1]
 
         self.memory[high_byte][low_byte] = value
 
@@ -121,12 +121,12 @@ cpu.store_reg_in_mem(a, 0x0200)
 # LDA #$05  - load literal 0x05 into accumulator
 cpu.write_reg(a, 0x05)
 # STA $0201 - store accumulator value in 0x0201
-cpu.store_reg_in_mem(a, 0x0208)
+cpu.store_reg_in_mem(a, 0x0201)
 # LDA #$08  - load literal 0x08 into accumulator
 cpu.write_reg(a, 0x08)
 # STA $0202 - store accumulator value in 0x0202
-cpu.store_reg_in_mem(a, 0x0210)
+cpu.store_reg_in_mem(a, 0x0202)
 
 print(mem.read_mem(0x0200))
-print(mem.read_mem(0x0208))
-print(mem.read_mem(0x0210))
+print(mem.read_mem(0x0201))
+print(mem.read_mem(0x0202))
