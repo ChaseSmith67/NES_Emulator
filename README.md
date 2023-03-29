@@ -40,3 +40,12 @@ end result of this step should **hopefully** be what is essentially a 6502 emula
 that is working as intended, I may break that file into sensible components to use where necessary in
 the larger program. Still learning a lot about this neat microprocessor, and now I'm learning some more
 about the software development process as well.
+
+## Update #3
+
+It may not look like much, but I believe I have a solid foundation now. What is (or appears to be) working
+properly is a full representation of a 6502 microprocessor and 2KB of memory for it to use. While it may 
+not be strictly necessary for the project, I decided to implement it in a way that actually mimics the
+internal components of such a system: 8-bit storage, Boolean flags and even appropriate endianness. The
+next step is to write a version of the instruction set using the basic methods I've created for the CPU.
+Thus far, the project is still entertaining and, quite honestly, I'm learning a lot. 
