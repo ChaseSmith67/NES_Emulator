@@ -34,10 +34,10 @@ class CPU(object):
         self.flag_C = np.array([0], dtype=np.bool_)    # Carry Flag
 
         # 8-Bit Stack Pointer
-        self.pointer = np.array([0x00FF], dtype=np.uint8)
+        self.pointer = np.array([0xFF], dtype=np.uint8)
 
         # 16-Bit Program Counter
-        self.counter = np.array([0x0800], dtype=np.uint16)
+        self.counter = np.array([0, 0], dtype=np.uint8)
 
     def read_reg(self, register: np.array) -> np.uint8:
         """Returns the 8-bit value stored in the specified register."""
@@ -52,7 +52,7 @@ class CPU(object):
             in the specified register."""
         register[0] = self.memory.read_mem(address)
 
-    def store_reg_in_mem(self, register: np.array, address: int) -> None:
+    def store_reg_in_mem(self, register: np.array, address: int | np.uint) -> None:
         """Loads the value stored in the specified register into the given memory address"""
         self.memory.write_mem(address, self.read_reg(register))
 
@@ -79,10 +79,10 @@ class Memory(object):
     """
     Represents the memory to be utilized by the CPU. Consists of a 2D array of 8 pages
     of 256 elements each, with each element being 1 byte.
+    ** NOTE: Little Endian **
     """
     def __init__(self):
         self.memory = np.zeros(shape=(8, 256), dtype=np.uint8)
-        # Considering breaking memory array into separate components: ZP, Stack, Gen Purpose
 
     def get_memory(self) -> np.array:
         """Returns entire memory array"""
@@ -90,11 +90,19 @@ class Memory(object):
 
     def read_mem(self, address: int) -> np.uint8:
         """Returns the data stored at the specified position in the memory array"""
-        return self.memory[address]
+
+        low_byte = address.to_bytes(2, "little")[1]
+        high_byte = address.to_bytes(2, "little")[0]
+
+        return self.memory[high_byte][low_byte]
 
     def write_mem(self, address: int, value: int | np.uint8) -> None:
         """Sets the specified position in the memory array equal to the given value"""
-        self.memory[address] = value
+
+        low_byte = address.to_bytes(2, "little")[1]
+        high_byte = address.to_bytes(2, "little")[0]
+
+        self.memory[high_byte][low_byte] = value
 
 
 # ========  Below this line is temporary functionality testing  =========
