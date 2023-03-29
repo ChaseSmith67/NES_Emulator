@@ -88,7 +88,7 @@ class Memory(object):
         """Returns entire memory array"""
         return self.memory
 
-    def read_mem(self, address: int) -> np.uint8:
+    def read_mem(self, address: int | np.uint16) -> np.uint8:
         """Returns the data stored at the specified position in the memory array"""
 
         low_byte = address.to_bytes(2, "little")[0]
@@ -96,7 +96,7 @@ class Memory(object):
 
         return self.memory[high_byte][low_byte]
 
-    def write_mem(self, address: int, value: int | np.uint8) -> None:
+    def write_mem(self, address: int | np.uint16, value: int | np.uint8) -> None:
         """Sets the specified position in the memory array equal to the given value"""
 
         low_byte = address.to_bytes(2, "little")[0]
