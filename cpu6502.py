@@ -147,6 +147,15 @@ class CPU(object):
         self.change_flag(self.flag_Z, (y_val == 0))
         self.change_flag(self.flag_N, (y_val < 0))
 
+    def DEC(self, address: int | np.uint) -> None:
+        """Decrement Memory. The value stored at the specified Memory address is decremented
+            by 1. If the result is Zero or Negative, the appropriate flag will be set."""
+        mem_val = self.memory.read_mem(address)
+        mem_val -= 1
+        self.change_flag(self.flag_Z, (mem_val == 0))
+        self.change_flag(self.flag_N, (mem_val < 0))
+        self.memory.write_mem(address, mem_val)
+
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
         self.load_reg_from_mem(self.reg_A, address)
