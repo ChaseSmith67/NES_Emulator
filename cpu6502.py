@@ -86,14 +86,17 @@ class CPU(object):
     # ----- Below this line: Instructions - May move these to a separate file later.
     # ----- Having these individually like this isn't strictly necessary, may refactor.
     # TODO: Negative values don't work yet. Determine best way to implement.
+    # TODO: Addressing Modes haven't been accounted for yet.
 
     def AND(self, address: int | np.uint) -> None:
-        """Bitwise Memory AND Accumulator, Result stored in Accumulator"""
+        """Bitwise Memory AND Accumulator, Result stored in Accumulator. If the result is
+         Zero or Negative, the appropriate flag will be set."""
         mem_val = mem.read_mem(address)
         a_val = self.read_reg(self.reg_A)
         result = mem_val & a_val
         self.write_reg(self.reg_A, result)
         self.change_flag(self.flag_Z, (result == 0))
+        self.change_flag(self.flag_N, (result < 0))
 
     def ASL(self, location) -> None:
         """Arithmatic Shift Left by One Bit. Most significant bit (Bit 7) is stored in
@@ -178,6 +181,18 @@ class CPU(object):
         self.write_reg(self.reg_Y, val)
         self.change_flag(self.flag_Z, (val == 0))
         self.change_flag(self.flag_N, (val < 0))
+
+    def EOR(self, address: int | np.uint) -> None:
+        """Bitwise Exclusive OR Memory with Accumulator. The value stored at the specified
+            memory address is compared with the value in the Accumulator using Exclusive OR
+            operation and the result is stored in the Accumulator. If the result is Zero or
+            Negative, the appropriate flag will be set."""
+        mem_val = mem.read_mem(address)
+        a_val = self.read_reg(self.reg_A)
+        result = mem_val ^ a_val
+        self.write_reg(self.reg_A, result)
+        self.change_flag(self.flag_Z, (result == 0))
+        self.change_flag(self.flag_N, (result < 0))
 
     def INC(self, address: int | np.uint) -> None:
         """Increment Memory. The value stored at the specified Memory address is incremented
