@@ -161,6 +161,24 @@ class CPU(object):
         self.change_flag(self.flag_N, (mem_val < 0))
         self.memory.write_mem(address, mem_val)
 
+    def DEX(self) -> None:
+        """Decrement Index X. The value stored Index Register X is decremented by 1.
+            If the result is Zero or Negative, the appropriate flag will be set."""
+        val = self.read_reg(self.reg_X)
+        val -= 1
+        self.write_reg(self.reg_X, val)
+        self.change_flag(self.flag_Z, (val == 0))
+        self.change_flag(self.flag_N, (val < 0))
+
+    def DEY(self) -> None:
+        """Decrement Index Y. The value stored Index Register Y is decremented by 1.
+            If the result is Zero or Negative, the appropriate flag will be set."""
+        val = self.read_reg(self.reg_Y)
+        val -= 1
+        self.write_reg(self.reg_Y, val)
+        self.change_flag(self.flag_Z, (val == 0))
+        self.change_flag(self.flag_N, (val < 0))
+
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
         self.load_reg_from_mem(self.reg_A, address)
@@ -233,5 +251,7 @@ cpu.LDA(0x05)
 print(cpu.read_reg(a))
 cpu.CMP(0x05)
 print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
+cpu.DEC(0x05)
+print(mem.read_mem(0x05))
 
 
