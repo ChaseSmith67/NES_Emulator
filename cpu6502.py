@@ -39,10 +39,10 @@ class CPU(object):
         self.flag_C = np.array([0], dtype=np.bool_)    # Carry Flag
 
         # 8-Bit Stack Pointer
-        self.pointer = np.array([0xFF], dtype=np.uint8)
+        self.SP = np.array([0xFF], dtype=np.uint8)
 
         # 16-Bit Program Counter
-        self.counter = np.array([0, 0], dtype=np.uint8)
+        self.PC = np.array([0, 0], dtype=np.uint8)
 
     def read_reg(self, register: np.array) -> np.uint8:
         """Returns the 8-bit value stored in the specified register."""
@@ -91,7 +91,7 @@ class CPU(object):
     def AND(self, address: int | np.uint) -> None:
         """Bitwise Memory AND Accumulator, Result stored in Accumulator. If the result is
          Zero or Negative, the appropriate flag will be set."""
-        mem_val = mem.read_mem(address)
+        mem_val = self.memory.read_mem(address)
         a_val = self.read_reg(self.reg_A)
         result = mem_val & a_val
         self.write_reg(self.reg_A, result)
@@ -187,7 +187,7 @@ class CPU(object):
             memory address is compared with the value in the Accumulator using Exclusive OR
             operation and the result is stored in the Accumulator. If the result is Zero or
             Negative, the appropriate flag will be set."""
-        mem_val = mem.read_mem(address)
+        mem_val = self.memory.read_mem(address)
         a_val = self.read_reg(self.reg_A)
         result = mem_val ^ a_val
         self.write_reg(self.reg_A, result)
@@ -244,6 +244,29 @@ class CPU(object):
             self.memory.write_mem(location, (value >> 1))
         self.change_flag(self.flag_C, (value % 2))
 
+    def NOP(self) -> None:
+        """No Operation. Probably not necessary."""
+        pass
+
+    def ORA(self, address: int | np.uint) -> None:
+        """Bitwise OR Memory with Accumulator. The value stored at the specified memory
+            address is compared with the value in the Accumulator using  OR operation
+            and the result is stored in the Accumulator. If the result is Zero or Negative,
+            the appropriate flag will be set."""
+        mem_val = self.memory.read_mem(address)
+        a_val = self.read_reg(self.reg_A)
+        result = mem_val | a_val
+        self.write_reg(self.reg_A, result)
+        self.change_flag(self.flag_Z, (result == 0))
+        self.change_flag(self.flag_N, (result < 0))
+
+    def PHA(self) -> None:
+        """Push Accumulator to Stack. Takes the value currently stored in the Accumulator
+            Register and stores it in the Memory address currently pointed to by the Stack
+            Pointer"""
+        address = int(0x0100 + self.read_reg(self.SP))
+        self.memory.write_mem(address, (self.read_reg(self.reg_A)))
+        self.decrement(self.SP)
 
 
 class Memory(object):
@@ -261,6 +284,7 @@ class Memory(object):
 
     def read_mem(self, address: int | np.uint16) -> np.uint8:
         """Returns the data stored at the specified position in the memory array"""
+        address = int(address)
 
         low_byte = address.to_bytes(2, "little")[0]
         high_byte = address.to_bytes(2, "little")[1]
@@ -286,25 +310,13 @@ n, v, b, d, i, z, c = cpu.flag_N, cpu.flag_V, cpu.flag_B, cpu.flag_D, cpu.flag_I
 
 cpu.memory.write_mem(0x05, 0x05)
 print(mem.read_mem(0x05))
-print(cpu.read_reg(x))
-cpu.CMP(0x05)
-print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
-cpu.LDX(0x05)
-print(cpu.read_reg(x))
-cpu.DEX()
-print(cpu.read_reg(x))
-cpu.DEX()
-print(cpu.read_reg(x))
-cpu.DEX()
-print(cpu.read_reg(x))
-cpu.INX()
-print(cpu.read_reg(x))
-print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
-cpu.INX()
-print(cpu.read_reg(x))
-print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
-cpu.DEX()
-print(cpu.read_reg(x))
-print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
+print(cpu.read_reg(a))
+cpu.LDA(0x05)
+print(cpu.read_reg(a))
+print(cpu.memory.read_mem(0x01FF))
+cpu.PHA()
+print(cpu.memory.read_mem(0x01FF))
+print(cpu.read_reg(cpu.SP))
+print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
 
 
