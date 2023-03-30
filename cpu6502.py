@@ -100,6 +100,22 @@ class CPU(object):
             self.memory.write_mem(location, (value << 1))
         self.change_flag(self.flag_C, (value >= 128))
 
+    def CLC(self) -> None:
+        """Clear Carry Flag"""
+        self.change_flag(self.flag_C, 0)
+
+    def CLD(self) -> None:
+        """Clear Decimal Mode Flag"""
+        self.change_flag(self.flag_D, 0)
+
+    def CLI(self) -> None:
+        """Clear Interrupt Disable Flag"""
+        self.change_flag(self.flag_I, 0)
+
+    def CLV(self) -> None:
+        """Clear Overflow Flag"""
+        self.change_flag(self.flag_V, 0)
+
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
         self.load_reg_from_mem(self.reg_A, address)
