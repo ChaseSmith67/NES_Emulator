@@ -116,6 +116,16 @@ class CPU(object):
         """Clear Overflow Flag"""
         self.change_flag(self.flag_V, 0)
 
+    def CMP(self, address: int | np.uint) -> None:
+        """Compare Accumulator with Memory. If the value of the Accumulator is greater
+            than or equal to the value at the given Memory address, the Carry flag will
+            be set. If Accumulator is Zero or Negative, those flags will be set as well."""
+        mem_val = self.memory.read_mem(address)
+        a_val = self.read_reg(self.reg_A)
+        self.change_flag(self.flag_C, (a_val >= mem_val))
+        self.change_flag(self.flag_Z, (a_val == 0))
+        self.change_flag(self.flag_N, (a_val < 0))
+
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
         self.load_reg_from_mem(self.reg_A, address)
@@ -179,80 +189,14 @@ a, x, y = cpu.reg_A, cpu.reg_X, cpu.reg_Y
 n, v, b, d, i, z, c = cpu.flag_N, cpu.flag_V, cpu.flag_B, cpu.flag_D, cpu.flag_I, cpu.flag_Z, cpu.flag_C
 
 
-# # LDA #$01  - load literal 0x01 into accumulator
-# cpu.write_reg(a, 0x01)
-# # STA $0200 - store accumulator value in 0x0200
-# cpu.store_reg_in_mem(a, 0x00)
-# # LDA #$05  - load literal 0x05 into accumulator
-# cpu.write_reg(a, 0x05)
-# # STA $0201 - store accumulator value in 0x0201
-# cpu.store_reg_in_mem(a, 0x01)
-# # LDA #$08  - load literal 0x08 into accumulator
-# cpu.write_reg(a, 0x08)
-# # STA $0202 - store accumulator value in 0x0202
-# cpu.store_reg_in_mem(a, 0x02)
-#
-# print(mem.read_mem(0x00))
-# print(mem.read_mem(0x01))
-# print(mem.read_mem(0x02))
-
-# print("REG LSR")
-# cpu.write_reg(a, 0x021)
-# print(cpu.read_reg(a))
-# cpu.LSR(a)
-# print(cpu.read_reg(a))
-#
-# print("MEM LSR")
-# mem.write_mem(0x05, 0x0A)
-# print(cpu.read_flag(cpu.flag_C))
-# print(mem.read_mem(0x05))
-# cpu.LSR(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-
-# print("MEM ASL")
-# mem.write_mem(0x05, 0x0A)
-# print(cpu.read_flag(cpu.flag_C))
-# print(mem.read_mem(0x05))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(0x05)
-# print(mem.read_mem(0x05))
-# print(cpu.read_flag(cpu.flag_C))
-
-# print("REG ASL")
-# cpu.write_reg(a, 0x0A)
-# print(cpu.read_reg(a))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
-# cpu.ASL(a)
-# print(cpu.read_reg(a))
-# print(cpu.read_flag(cpu.flag_C))
+cpu.memory.write_mem(0x05, 0x05)
+print(mem.read_mem(0x05))
+print(cpu.read_reg(a))
+cpu.CMP(0x05)
+print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
+cpu.LDA(0x05)
+print(cpu.read_reg(a))
+cpu.CMP(0x05)
+print(cpu.read_flag(n), cpu.read_flag(z), cpu.read_flag(c))
 
 
