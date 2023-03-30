@@ -80,6 +80,7 @@ class CPU(object):
 
     # ----- Below this line: Instructions - May move these to a separate file later.
     # ----- Having these individually like this isn't strictly necessary, may refactor.
+    # TODO: Negative values don't work yet. Determine best way to implement.
 
     def AND(self, address: int | np.uint) -> None:
         """Bitwise Memory AND Accumulator, Result stored in Accumulator"""
@@ -125,6 +126,26 @@ class CPU(object):
         self.change_flag(self.flag_C, (a_val >= mem_val))
         self.change_flag(self.flag_Z, (a_val == 0))
         self.change_flag(self.flag_N, (a_val < 0))
+
+    def CPX(self, address: int | np.uint) -> None:
+        """Compare Index X with Memory. If the value of Index X is greater than or equal to
+            the value at the given Memory address, the Carry flag will be set. If Index X
+            is Zero or Negative, those flags will be set as well."""
+        mem_val = self.memory.read_mem(address)
+        x_val = self.read_reg(self.reg_X)
+        self.change_flag(self.flag_C, (x_val >= mem_val))
+        self.change_flag(self.flag_Z, (x_val == 0))
+        self.change_flag(self.flag_N, (x_val < 0))
+
+    def CPY(self, address: int | np.uint) -> None:
+        """Compare Index Y with Memory. If the value of Index Y is greater than or equal to
+            the value at the given Memory address, the Carry flag will be set. If Index Y
+            is Zero or Negative, those flags will be set as well."""
+        mem_val = self.memory.read_mem(address)
+        y_val = self.read_reg(self.reg_Y)
+        self.change_flag(self.flag_C, (y_val >= mem_val))
+        self.change_flag(self.flag_Z, (y_val == 0))
+        self.change_flag(self.flag_N, (y_val < 0))
 
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
