@@ -70,12 +70,24 @@ class CPU(object):
         """Returns the Boolean value of the specified flag"""
         return flag[0]
 
-    def change_flag(self, flag: np.array) -> None:
-        """Changes the Boolean value of the specified flag"""
-        flag[0] = not flag[0]
+    def change_flag(self, flag: np.array, value=None) -> None:
+        """Changes the Boolean value of the specified flag to the specified value. If no
+            value is given, the flag's state will be changed."""
+        if value is None:
+            flag[0] = not flag[0]
+        else:
+            flag[0] = value
 
     # ----- Below this line: Instructions - May move these to a separate file later.
     # ----- Having these individually like this isn't strictly necessary, may refactor.
+
+    def AND(self, address: int | np.uint) -> None:
+        """Bitwise Memory AND Accumulator, Result stored in Accumulator"""
+        mem_val = mem.read_mem(address)
+        a_val = self.read_reg(self.reg_A)
+        result = mem_val & a_val
+        self.write_reg(self.reg_A, result)
+        self.change_flag(self.flag_Z, (result == 0))
 
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
@@ -94,11 +106,11 @@ class CPU(object):
             Specified location can be either a Memory address or Accumulator."""
         if type(location) == np.ndarray:
             value = self.reg_A[0]
-            self.flag_C[0] = (value % 2)
-            self.reg_A[0] = value >> 1
+            self.change_flag(self.flag_C, (value % 2))
+            self.write_reg(self.reg_A, (value >> 1))
         else:
             value = self.memory.read_mem(location)
-            self.flag_C[0] = (value % 2)
+            self.change_flag(self.flag_C, (value % 2))
             self.memory.write_mem(location, (value >> 1))
 
 
@@ -161,15 +173,17 @@ n, v, b, d, i, z, c = cpu.flag_N, cpu.flag_V, cpu.flag_B, cpu.flag_D, cpu.flag_I
 print("REG LSR")
 cpu.write_reg(a, 0x021)
 print(cpu.read_reg(a))
-print(cpu.read_flag(c))
 cpu.LSR(a)
 print(cpu.read_reg(a))
-print(cpu.read_flag(c))
 
 print("MEM LSR")
 mem.write_mem(0x05, 0x0A)
 print(mem.read_mem(0x05))
-print(cpu.read_flag(c))
 cpu.LSR(0x05)
 print(mem.read_mem(0x05))
-print(cpu.read_flag(c))
+print(cpu.read_flag(cpu.flag_Z))
+print("AND")
+cpu.AND(0x05)
+print(cpu.read_reg(a))
+print(cpu.read_flag(cpu.flag_Z))
+
