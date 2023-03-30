@@ -8,7 +8,12 @@ import numpy as np
 
 
 class CPU(object):
-
+    """
+    Represents the 6502 processor. Has 8-bit arrays representing the registers
+    and stack pointer, 1-bit arrays representing the flags, a 16-bit array
+    representing the program counter, and a Memory Object that is used to emulate
+    the 2KB of memory for storing data, including the stack.
+    """
     def __init__(self, memory):
         """
         Initializes the CPU object and sets all registers and flags to 0.
