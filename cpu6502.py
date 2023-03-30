@@ -89,6 +89,17 @@ class CPU(object):
         self.write_reg(self.reg_A, result)
         self.change_flag(self.flag_Z, (result == 0))
 
+    def ASL(self, location) -> None:
+        """Arithmatic Shift Left by One Bit. Most significant bit (Bit 7) is stored in
+            Carry Flag. Specified location can be either Memory address or Accumulator"""
+        if type(location) == np.ndarray:
+            value = self.read_reg(self.reg_A)
+            self.write_reg(self.reg_A, (value << 1))
+        else:
+            value = self.memory.read_mem(location)
+            self.memory.write_mem(location, (value << 1))
+        self.change_flag(self.flag_C, (value >= 128))
+
     def LDA(self, address: int | np.uint) -> None:
         """Load Accumulator from specified Memory address"""
         self.load_reg_from_mem(self.reg_A, address)
@@ -105,13 +116,12 @@ class CPU(object):
         """Logical Shift Right by One Bit. Least significant bit stored in Carry Flag.
             Specified location can be either a Memory address or Accumulator."""
         if type(location) == np.ndarray:
-            value = self.reg_A[0]
-            self.change_flag(self.flag_C, (value % 2))
+            value = self.read_reg(self.reg_A)
             self.write_reg(self.reg_A, (value >> 1))
         else:
             value = self.memory.read_mem(location)
-            self.change_flag(self.flag_C, (value % 2))
             self.memory.write_mem(location, (value >> 1))
+        self.change_flag(self.flag_C, (value % 2))
 
 
 
@@ -170,20 +180,63 @@ n, v, b, d, i, z, c = cpu.flag_N, cpu.flag_V, cpu.flag_B, cpu.flag_D, cpu.flag_I
 # print(mem.read_mem(0x01))
 # print(mem.read_mem(0x02))
 
-print("REG LSR")
-cpu.write_reg(a, 0x021)
-print(cpu.read_reg(a))
-cpu.LSR(a)
-print(cpu.read_reg(a))
+# print("REG LSR")
+# cpu.write_reg(a, 0x021)
+# print(cpu.read_reg(a))
+# cpu.LSR(a)
+# print(cpu.read_reg(a))
+#
+# print("MEM LSR")
+# mem.write_mem(0x05, 0x0A)
+# print(cpu.read_flag(cpu.flag_C))
+# print(mem.read_mem(0x05))
+# cpu.LSR(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
 
-print("MEM LSR")
-mem.write_mem(0x05, 0x0A)
-print(mem.read_mem(0x05))
-cpu.LSR(0x05)
-print(mem.read_mem(0x05))
-print(cpu.read_flag(cpu.flag_Z))
-print("AND")
-cpu.AND(0x05)
-print(cpu.read_reg(a))
-print(cpu.read_flag(cpu.flag_Z))
+# print("MEM ASL")
+# mem.write_mem(0x05, 0x0A)
+# print(cpu.read_flag(cpu.flag_C))
+# print(mem.read_mem(0x05))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(0x05)
+# print(mem.read_mem(0x05))
+# print(cpu.read_flag(cpu.flag_C))
+
+# print("REG ASL")
+# cpu.write_reg(a, 0x0A)
+# print(cpu.read_reg(a))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+# cpu.ASL(a)
+# print(cpu.read_reg(a))
+# print(cpu.read_flag(cpu.flag_C))
+
 
