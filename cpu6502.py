@@ -71,7 +71,7 @@ class CPU(object):
             specified, default is 1."""
         register[0] -= amount
 
-    def read_flag(self, flag: np.array) -> None:
+    def read_flag(self, flag: np.array) -> np.bool_:
         """Returns the Boolean value of the specified flag"""
         return flag[0]
 
@@ -82,6 +82,22 @@ class CPU(object):
             flag[0] = not flag[0]
         else:
             flag[0] = value
+
+    def get_processor_status(self) -> np.uint8:
+        """Returns the current status of the flags as an 8-bit value. The Break Flag and
+            bit 5 are both set to 1"""
+        # Read flags in order
+        status = np.array([0, 0, 1, 1, 0, 0, 0, 0], dtype=np.bool_)
+        status[0] = self.read_flag(self.flag_N)
+        status[1] = self.read_flag(self.flag_V)
+        status[4] = self.read_flag(self.flag_D)
+        status[5] = self.read_flag(self.flag_I)
+        status[6] = self.read_flag(self.flag_Z)
+        status[7] = self.read_flag(self.flag_C)
+        # Reverse flag array and convert to 8-bit integer
+        bits = status[::-1]
+        result = np.sum(np.logspace(0, bits.size - 1, num=bits.size, base=2) * bits, dtype=np.int8)
+        return result.view(dtype=np.uint8)
 
     # ----- Below this line: Instructions - May move these to a separate file later.
     # ----- Having these individually like this isn't strictly necessary, may refactor.
@@ -268,6 +284,14 @@ class CPU(object):
         self.memory.write_mem(address, (self.read_reg(self.reg_A)))
         self.decrement(self.SP)
 
+    def PHP(self) -> None:
+        """Push Processor Status to Stack. Takes the values of all flags, represented as
+            an 8-bit integer and stores it in the Memory address currently pointed to by
+            the Stack Pointer"""
+        address = int(0x0100 + self.read_reg(self.SP))
+        status = self.get_processor_status()
+        self.memory.write_mem(address, status)
+        self.decrement(self.SP)
 
 class Memory(object):
     """
@@ -319,4 +343,9 @@ print(cpu.memory.read_mem(0x01FF))
 print(cpu.read_reg(cpu.SP))
 print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
 
+print(cpu.get_processor_status())
+cpu.PHP()
+print(cpu.memory.read_mem(0x01FE))
+print(cpu.read_reg(cpu.SP))
+print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
 
