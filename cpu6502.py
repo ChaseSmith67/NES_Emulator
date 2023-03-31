@@ -115,7 +115,7 @@ class CPU(object):
         self.change_flag(self.flag_N, (result < 0))
 
     def ASL(self, location) -> None:
-        """Arithmatic Shift Left by One Bit. Most significant bit (Bit 7) is stored in
+        """Arithmetic Shift Left by One Bit. Most significant bit (Bit 7) is stored in
             Carry Flag. Specified location can be either Memory address or Accumulator"""
         if type(location) == np.ndarray:
             value = self.read_reg(self.reg_A)
