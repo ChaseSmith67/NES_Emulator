@@ -317,6 +317,44 @@ class CPU(object):
         self.change_flag(self.flag_Z, (bits[6] != 0))
         self.change_flag(self.flag_C, (bits[7] != 0))
 
+    def ROL(self, location) -> None:
+        """Rotate Left. Location can be either Memory address or Accumulator. The value stored at
+            the location has its bits shifted to the left, with the value of the Carry Flag becoming
+            the new bit 0 and the previous value of bit 7 being stored in the Carry Flag."""
+        if type(location) == np.ndarray:
+            value = self.read_reg(self.reg_A)
+            value = (value << 1)
+            if self.read_flag(self.flag_C):
+                value += 1
+            self.write_reg(self.reg_A, value)
+        else:
+            value = self.memory.read_mem(location)
+            value = (value << 1)
+            if self.read_flag(self.flag_C):
+                value += 1
+            self.memory.write_mem(value)
+        self.change_flag(self.flag_C, (value >= 128))
+
+    def ROR(self, location) -> None:
+        """Rotate Right. Location can be either Memory address or Accumulator. The value stored at
+            the location has its bits shifted to the right, with the value of the Carry Flag becoming
+            the new bit 7 and the previous value of bit 0 being stored in the Carry Flag."""
+        if type(location) == np.ndarray:
+            value = self.read_reg(self.reg_A)
+            new_c = np.bool_(value % 2 != 0)
+            value = (value >> 1)
+            if self.read_flag(self.flag_C):
+                value += 128
+            self.write_reg(self.reg_A, value)
+        else:
+            value = self.memory.read_mem(location)
+            new_c = np.bool_(value % 2 != 0)
+            value = (value >> 1)
+            if self.read_flag(self.flag_C):
+                value += 128
+            self.memory.write_mem(value)
+        self.change_flag(self.flag_C, new_c)
+
 class Memory(object):
     """
     Represents the memory to be utilized by the CPU. Consists of a 2D array of 8 pages
@@ -367,10 +405,10 @@ print(cpu.memory.read_mem(0x01FF))
 print(cpu.read_reg(cpu.SP))
 print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
 
-print(cpu.get_processor_status())
-cpu.PHP()
-print(cpu.memory.read_mem(0x01FE))
-print(cpu.read_reg(cpu.SP))
-print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
-cpu.PLP()
+print(cpu.read_reg(a))
+cpu.change_flag(c)
+cpu.ROL(a)
+print(cpu.read_reg(a))
+cpu.ROR(a)
+print(cpu.read_reg(a))
 
