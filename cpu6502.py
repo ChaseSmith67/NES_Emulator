@@ -279,7 +279,7 @@ class CPU(object):
     def PHA(self) -> None:
         """Push Accumulator to Stack. Takes the value currently stored in the Accumulator
             Register and stores it in the Memory address currently pointed to by the Stack
-            Pointer"""
+            Pointer. Stack Pointer decremented."""
         address = int(0x0100 + self.read_reg(self.SP))
         self.memory.write_mem(address, (self.read_reg(self.reg_A)))
         self.decrement(self.SP)
@@ -287,11 +287,35 @@ class CPU(object):
     def PHP(self) -> None:
         """Push Processor Status to Stack. Takes the values of all flags, represented as
             an 8-bit integer and stores it in the Memory address currently pointed to by
-            the Stack Pointer"""
+            the Stack Pointer. Stack Pointer decremented."""
         address = int(0x0100 + self.read_reg(self.SP))
         status = self.get_processor_status()
         self.memory.write_mem(address, status)
         self.decrement(self.SP)
+
+    def PLA(self) -> None:
+        """Pull Accumulator from Stack. The value in the Memory address pointed to by the
+            Stack Pointer is stored in the Accumulator. Stack Pointer incremented"""
+        self.increment(self.SP)
+        address = int(0x0100 + self.read_reg(self.SP))
+        value = self.memory.read_mem(address)
+        self.write_reg(self.reg_A, value)
+
+    def PLP(self) -> None:
+        """Pull Processor Status from Stack. The value in the Memory address pointed to by the
+            Stack Pointer is pulled and the Status Flags set accordingly. Stack Pointer incremented"""
+        self.increment(self.SP)
+        address = int(0x0100 + self.read_reg(self.SP))
+        value = str(bin(self.memory.read_mem(address)))
+        bits = value[2:]
+        while len(bits) < 8:    # This is kinda janky, will likely refactor later
+            bits = "0" + bits
+        self.change_flag(self.flag_N, (bits[0] != 0))
+        self.change_flag(self.flag_V, (bits[1] != 0))
+        self.change_flag(self.flag_D, (bits[4] != 0))
+        self.change_flag(self.flag_I, (bits[5] != 0))
+        self.change_flag(self.flag_Z, (bits[6] != 0))
+        self.change_flag(self.flag_C, (bits[7] != 0))
 
 class Memory(object):
     """
@@ -348,4 +372,5 @@ cpu.PHP()
 print(cpu.memory.read_mem(0x01FE))
 print(cpu.read_reg(cpu.SP))
 print(cpu.memory.read_mem(cpu.read_reg(cpu.SP)))
+cpu.PLP()
 
